@@ -23,9 +23,9 @@
 		<h1 class="mb-4 text-primary">{{ message }}</h1>
 		<form @submit.prevent="login">
 			<div class="mb-3">
-				<label for="username">Username</label>
+				<label for="email">Email</label>
 				<br>
-				<input v-model="username" type="text" id="username" required>
+				<input v-model="email" type="email" id="email" required>
 			</div>
 
 			<div class="mb-4">
@@ -35,6 +35,8 @@
 			</div>
 
 			<button type="submit" class="btn btn-primary w-20">Log In</button>
+
+			<div v-if="errorMsg" class="text-danger mt-3">{{ errorMsg }}</div>
 		</form>
 	</div>
 
@@ -44,14 +46,35 @@
 			data() {
 				return {
 					message: 'Welcome to the Dog Walking Service!',
-					username: '',
-					password: ''
+					email: '',
+					password: '',
+					errorMsg: ''
 				};
 			},
 			methods: {
-				login() {
-					//this.username
-					//this.password
+				async login() {
+					try {
+						const response = await fetch('/api/users/login', {
+							method: 'POST',
+							headers: { 'Content-Type': 'application/json' },
+							body: JSON.stringify({
+								email: this.email,
+								password: this.password
+							})
+						});
+
+						if (!response.ok) {
+							const json = await response.json();
+							this.errorMsg = json.error || 'Login failed';
+							return;
+						}
+
+						const json = await response.json();
+						window.location.href = json.user.role + "-dashboard.html";
+					} catch (err) {
+						this.errorMsg = 'Unable to connect to server';
+						console.error(err);
+					}
 				}
 			}
 		}).mount('#app');
