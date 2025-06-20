@@ -28,6 +28,24 @@ router.post('/register', async (req, res) => {
 	}
 });
 
+//Dogs endpoint from part 1
+//task says to use dogs endpoint from part 1 so i assume i cant modify this to return the
+//dog_id therefore i need to 'guess' the dog_id by the returned order in the frontend but
+// it shouldnt be an issue 
+router.get('/dogs', async (req, res) => {
+	try {
+		const [rows] = await db.execute(`
+      SELECT Dogs.name AS dog_name, Dogs.size, Users.username AS owner_username
+      FROM Dogs
+      JOIN Users ON Dogs.owner_id = Users.user_id
+    `);
+		res.json(rows);
+	} catch (err) {
+		console.error(err);
+		res.status(500).json({ error: 'Unable to get dogs' });
+	}
+});
+
 router.get("/mydogs", async (req, res) => {
 	try {
 		if (!req.session.user) {
