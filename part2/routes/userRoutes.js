@@ -28,6 +28,26 @@ router.post('/register', async (req, res) => {
 	}
 });
 
+router.get("/mydogs", async (req, res) => {
+	try {
+		if (!req.session.user) {
+			return res.status(401).json({ error: 'Not logged in' });
+		}
+
+		const userId = req.session.user.user_id;
+
+		const [dogs] = await db.query(
+			`SELECT dog_id, name, size FROM Dogs WHERE owner_id = ?`,
+			[userId]
+		);
+
+		res.json(dogs);
+	} catch (err) {
+		console.error(err);
+		res.status(500).json({ error: "Unable to get my dogs" })
+	}
+});
+
 router.get('/me', (req, res) => {
 	if (!req.session.user) {
 		return res.status(401).json({ error: 'Not logged in' });
