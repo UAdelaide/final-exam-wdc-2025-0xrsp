@@ -1,25 +1,71 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
 	<meta charset="UTF-8" />
-	<title>Dog Walking App</title>
-	<div id="app">{{ message }}</div>
+	<title>Dog Walking Service App Homepage</title>
+	<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+	<style>
+		body {
+			background: hotpink;
+			font-family: "Comic Sans MS", "Comic Sans", cursive;
+			color: yellow;
+			text-align: center;
+		}
+
+		#dog-img {
+			width: 500px;
+			height: 500px;
+			rotate: 10deg;
+		}
+
+		button {
+			font-size: 21px;
+			background-color: lime;
+		}
+	</style>
 </head>
 
 <body>
-	<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+	<div id="app">
+		<h1>Dog Walking Service App Homepage</h1>
+
+		<p>Click the button 5 times to reveal the dog of the day</p>
+
+		<button @click="clickDog">CLICK ME</button>
+
+		<h2>Dog of the Day</h2>
+		<div v-if="showDog">
+			<img id="dog-img" :src="dogUrl" />
+		</div>
+	</div>
+
 	<script>
-		const { createApp, ref } = Vue
+		const { createApp, ref, onMounted } = Vue;
 
 		createApp({
 			setup() {
-				const message = ref('Hello vue!')
+				const clicks = ref(0);
+				const dogUrl = ref('');
+				const showDog = ref(false);
+
+				const clickDog = async () => {
+					clicks.value++;
+					if (clicks.value == 5) {
+						const res = await fetch('https://dog.ceo/api/breeds/image/random');
+						const data = await res.json();
+						dogUrl.value = data.message;
+						showDog.value = true;
+					}
+				};
+
 				return {
-					message
-				}
+					clickDog,
+					dogUrl,
+					showDog
+				};
 			}
-		}).mount('#app')
+		}).mount('#app');
 	</script>
 </body>
 
