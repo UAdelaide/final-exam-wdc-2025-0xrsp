@@ -4,6 +4,18 @@ require('dotenv').config();
 
 const app = express();
 
+const session = require("express-session");
+const sessionKey = process.env.SESSION_KEY;
+
+app.use(
+	session({
+		secret: sessionKey,
+		resave: false,
+		saveUninitialized: true,
+		cookie: { secure: false },
+	})
+);
+
 // Middleware
 app.use(express.json());
 app.use(express.static(path.join(__dirname, '/public')));
