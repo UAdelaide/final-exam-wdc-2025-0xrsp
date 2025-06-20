@@ -42,7 +42,7 @@ router.get("/mydogs", async (req, res) => {
 		);
 
 		res.json(dogs);
-	} catch (err) {
+t 	} catch (err) {
 		console.error(err);
 		res.status(500).json({ error: "Unable to get my dogs" })
 	}
